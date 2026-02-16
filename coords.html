@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reverse Geocoding</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-pink-50 min-h-screen flex items-center justify-center">
+
+  <div class="bg-white w-full max-w-md p-6 rounded-2xl shadow-lg">
+
+    <h2 class="text-2xl font-bold text-center mb-2">
+      📍 Reverse Geocoding
+    </h2>
+
+    <p class="text-center text-gray-500 mb-4">
+      Enter latitude and longitude to get the address
+    </p>
+
+    <!-- Latitude -->
+    <input
+      id="latitude"
+      type="number"
+      step="any"
+      placeholder="Latitude (e.g. 28.6139)"
+      class="w-full border p-2 rounded mb-3"
+    />
+
+    <!-- Longitude -->
+    <input
+      id="longitude"
+      type="number"
+      step="any"
+      placeholder="Longitude (e.g. 77.2090)"
+      class="w-full border p-2 rounded mb-4"
+    />
+
+    <!-- Button -->
+    <button
+      onclick="getAddress()"
+      class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded font-semibold"
+    >
+      Get Address
+    </button>
+
+    <!-- RESULT AREA (IMPORTANT) -->
+    <div id="result" class="mt-5 text-gray-700"></div>
+
+  </div>
+
+<script>
+async function getAddress() {
+  const lat = document.getElementById("latitude").value;
+  const lon = document.getElementById("longitude").value;
+  const resultDiv = document.getElementById("result");
+
+  if (!lat || !lon) {
+    resultDiv.innerHTML =
+      "<p class='text-red-500'>❌ Please enter both latitude and longitude.</p>";
+    return;
+  }
+
+  resultDiv.innerHTML = "⏳ Fetching address...";
+
+  try {
+    const response = await fetch("http://127.0.0.1:8000/reverse-geocoding", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        latitude: parseFloat(lat),
+        longitude: parseFloat(lon)
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.status !== "success") {
+      resultDiv.innerHTML =
+        "<p class='text-red-500'>❌ Address not found.</p>";
+      return;
+    }
+
+    // ✅ PROPER DISPLAY (NO [object Object])
+    resultDiv.innerHTML = `
+      <div class="bg-pink-100 p-4 rounded-lg mt-3">
+        <p><strong>📍 Location:</strong><br>${data.location}</p>
+        <hr class="my-2">
+        <p><strong>🏙️ City:</strong> ${data.address.city || "-"}</p>
+        <p><strong>🛣️ Road:</strong> ${data.address.road || "-"}</p>
+        <p><strong>📮 Pincode:</strong> ${data.address.postcode || "-"}</p>
+        <p><strong>🌍 Country:</strong> ${data.address.country}</p>
+      </div>
+    `;
+
+  } catch (error) {
+    resultDiv.innerHTML =
+      "<p class='text-red-500'>❌ Server error. Please try again.</p>";
+  }
+}
+</script>
+
+</body>
+</html>

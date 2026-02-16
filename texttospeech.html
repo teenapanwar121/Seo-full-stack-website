@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Text to Speech Tool</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 flex items-center justify-center">
+
+  <div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-2xl">
+
+    <h1 class="text-2xl font-bold text-center text-gray-800">
+      🔊 Text to Speech
+    </h1>
+
+    <p class="text-center text-sm text-gray-500 mt-2">
+      Type text and listen to it spoken aloud
+    </p>
+
+    <!-- Input -->
+    <textarea
+      id="inputText"
+      rows="5"
+      placeholder="Type or paste your text here..."
+      class="w-full mt-6 border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400"
+    ></textarea>
+
+    <!-- Button -->
+    <button
+      onclick="convertToSpeech()"
+      class="w-full mt-4 bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 rounded-lg transition"
+    >
+      Convert to Speech
+    </button>
+
+    <!-- Status -->
+    <p id="status" class="mt-3 text-sm text-center text-gray-500"></p>
+
+    <!-- Audio -->
+    <div id="audioContainer" class="mt-6 hidden text-center">
+      <audio id="audioPlayer" controls class="w-full"></audio>
+    </div>
+
+    <p class="mt-4 text-xs text-gray-500 text-center">
+      🔒 English text recommended · Click ▶️ to play
+    </p>
+
+  </div>
+
+<script>
+async function convertToSpeech() {
+  const text = document.getElementById("inputText").value.trim();
+  const status = document.getElementById("status");
+  const audioContainer = document.getElementById("audioContainer");
+  const audioPlayer = document.getElementById("audioPlayer");
+
+  if (!text) {
+    status.innerText = "❌ Please enter text";
+    return;
+  }
+
+  status.innerText = "⏳ Generating speech…";
+  audioContainer.classList.add("hidden");
+
+  try {
+    const response = await fetch("http://127.0.0.1:8000/tts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ text })
+    });
+
+    if (!response.ok) {
+      throw new Error("TTS failed");
+    }
+
+    const audioBlob = await response.blob();
+    const audioUrl = URL.createObjectURL(audioBlob);
+
+    audioPlayer.src = audioUrl;
+    audioContainer.classList.remove("hidden");
+
+    status.innerText = "✅ Speech generated. Click ▶️ to play.";
+
+  } catch (err) {
+    console.error(err);
+    status.innerText = "❌ Error generating speech";
+  }
+}
+</script>
+
+</body>
+</html>

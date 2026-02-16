@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Age Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-pink-50 min-h-screen flex items-center justify-center">
+
+  <div class="bg-white w-full max-w-md p-6 rounded-2xl shadow-lg">
+
+    <h2 class="text-2xl font-bold text-center mb-2">
+      🎂 Age Calculator
+    </h2>
+
+    <p class="text-center text-gray-500 mb-4">
+      Enter your date of birth to calculate your age
+    </p>
+
+    <!-- Date Input -->
+    <input
+      id="dob"
+      type="date"
+      class="w-full border p-2 rounded mb-4"
+    />
+
+    <!-- Button -->
+    <button
+      onclick="calculateAge()"
+      class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded font-semibold"
+    >
+      Calculate Age
+    </button>
+
+    <!-- RESULT -->
+    <div id="result" class="mt-5 text-gray-700"></div>
+
+  </div>
+
+<script>
+async function calculateAge() {
+  const dob = document.getElementById("dob").value;
+  const resultDiv = document.getElementById("result");
+
+  if (!dob) {
+    resultDiv.innerHTML =
+      "<p class='text-red-500'>❌ Please select your date of birth.</p>";
+    return;
+  }
+
+  resultDiv.innerHTML = "⏳ Calculating age...";
+
+  try {
+    const response = await fetch("http://127.0.0.1:8000/age-calculator", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        date_of_birth: dob
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.status !== "success") {
+      resultDiv.innerHTML =
+        "<p class='text-red-500'>❌ Unable to calculate age.</p>";
+      return;
+    }
+
+    // ✅ Proper object handling
+    resultDiv.innerHTML = `
+      <div class="bg-pink-100 p-4 rounded-lg mt-3 text-center">
+        <p class="font-semibold mb-2">📅 Date of Birth: ${data.date_of_birth}</p>
+        <p>🎉 <strong>${data.age.years}</strong> Years</p>
+        <p>📆 <strong>${data.age.months}</strong> Months</p>
+        <p>⏳ <strong>${data.age.days}</strong> Days</p>
+      </div>
+    `;
+
+  } catch (error) {
+    resultDiv.innerHTML =
+      "<p class='text-red-500'>❌ Server error. Please try again.</p>";
+  }
+}
+</script>
+
+</body>
+</html>

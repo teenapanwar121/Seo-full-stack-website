@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>YouTube to MP3 Converter</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-pink-100 min-h-screen flex items-center justify-center">
+
+  <div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-lg">
+    
+    <h1 class="text-2xl font-bold text-center mb-2 text-pink-600">
+      🎵 YouTube to MP3
+    </h1>
+
+    <p class="text-gray-500 text-center mb-6">
+      Convert YouTube videos to MP3 instantly
+    </p>
+
+    <!-- YouTube URL -->
+    <label class="block text-sm font-semibold mb-1">YouTube Video URL</label>
+    <input
+      id="ytUrl"
+      type="text"
+      placeholder="https://www.youtube.com/watch?v=xxxx"
+      class="w-full border rounded-lg p-3 mb-4 focus:outline-none focus:ring focus:ring-pink-300"
+    />
+
+    <!-- Quality -->
+    <label class="block text-sm font-semibold mb-1">Audio Quality</label>
+    <select
+      id="quality"
+      class="w-full border rounded-lg p-3 mb-6 focus:outline-none focus:ring focus:ring-pink-300"
+    >
+      <option value="128">128 kbps</option>
+      <option value="192" selected>192 kbps</option>
+      <option value="320">320 kbps</option>
+    </select>
+
+    <!-- Button -->
+    <button
+      onclick="convertToMP3()"
+      class="w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 rounded-lg transition"
+    >
+      🎧 Convert & Download
+    </button>
+
+    <!-- Status -->
+    <p id="status" class="text-center mt-4 text-gray-600"></p>
+
+  </div>
+
+  <script>
+    async function convertToMP3() {
+      const url = document.getElementById("ytUrl").value.trim();
+      const quality = document.getElementById("quality").value;
+      const status = document.getElementById("status");
+
+      if (!url) {
+        status.innerHTML = "❌ Please enter a YouTube URL";
+        status.className = "text-center mt-4 text-red-600";
+        return;
+      }
+
+      status.innerHTML = "⏳ Converting... please wait";
+      status.className = "text-center mt-4 text-pink-600";
+
+      try {
+        const response = await fetch(
+          "http://127.0.0.1:8000/youtube-to-mp3",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              url: url,
+              quality: quality
+            })
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Conversion failed");
+        }
+
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = downloadUrl;
+        a.download = "youtube_audio.mp3";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        status.innerHTML = "✅ MP3 downloaded successfully!";
+        status.className = "text-center mt-4 text-green-600";
+
+      } catch (error) {
+        status.innerHTML = "❌ Error converting video";
+        status.className = "text-center mt-4 text-red-600";
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Temp Mail</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-pink-100 min-h-screen flex flex-col items-center p-4">
+
+  <h1 class="text-3xl font-bold mb-2 text-black">Temporary Email Inbox</h1>
+  <p class="text-black text-center mb-6 max-w-xl">
+    Generate a temporary email to receive messages instantly without revealing your personal email. 
+    This disposable email can be used for testing, signing up for services, or avoiding spam. 
+    <strong>Note:</strong> Each temp email can handle around 10–20 messages at a time before expiring.
+  </p>
+
+  <div class="max-w-xl w-full bg-white shadow-md rounded-lg p-6">
+
+    <!-- Generate Temp Mail -->
+    <button id="createEmailBtn" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded w-full">
+      Generate Temp Email
+    </button>
+    <p class="mt-2 text-black">Email: <span id="tempEmail" class="font-mono">None</span></p>
+
+    <!-- Check Inbox -->
+    <button id="getInboxBtn" class="mt-4 bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded w-full">
+      Check Inbox
+    </button>
+
+    <!-- Inbox List -->
+    <div id="inbox" class="mt-4 space-y-2"></div>
+
+    <!-- Read Message -->
+    <div id="messageDetails" class="mt-6 p-4 border rounded bg-gray-50 hidden">
+      <h3 class="font-bold text-lg mb-2">Message Content</h3>
+      <p><strong>From:</strong> <span id="msgFrom"></span></p>
+      <p><strong>Subject:</strong> <span id="msgSubject"></span></p>
+      <p><strong>Date:</strong> <span id="msgDate"></span></p>
+      <p class="mt-2 whitespace-pre-wrap" id="msgBody"></p>
+    </div>
+
+  </div>
+
+  <script>
+    let currentEmail = '';
+
+    // Generate temp email
+    document.getElementById("createEmailBtn").addEventListener("click", async () => {
+      const username = 'user' + Math.floor(Math.random() * 10000);
+      const domain = '1secmail.com';
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/temp-mail/create", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ username, domain })
+        });
+        const data = await res.json();
+        if(data.status === "success"){
+          currentEmail = data.email;
+          document.getElementById("tempEmail").innerText = currentEmail;
+          document.getElementById("inbox").innerHTML = '';
+          document.getElementById("messageDetails").classList.add("hidden");
+        } else {
+          alert("Failed to create temp email");
+        }
+      } catch(err){
+        alert("Error connecting to server: " + err);
+      }
+    });
+
+    // Check Inbox
+    document.getElementById("getInboxBtn").addEventListener("click", async () => {
+      if(!currentEmail) return alert("Generate an email first!");
+      try {
+        const res = await fetch("http://127.0.0.1:8000/temp-mail/inbox", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ email: currentEmail })
+        });
+        const data = await res.json();
+
+        const inboxDiv = document.getElementById("inbox");
+        inboxDiv.innerHTML = '';
+
+        if(data.messages && data.messages.length > 0){
+          data.messages.forEach(msg => {
+            const btn = document.createElement("button");
+            btn.className = "w-full text-left p-2 bg-gray-200 hover:bg-gray-300 rounded";
+            btn.innerText = `${msg.from} - ${msg.subject}`;
+            btn.addEventListener("click", () => readMessage(msg.id));
+            inboxDiv.appendChild(btn);
+          });
+        } else {
+          inboxDiv.innerHTML = '<p class="text-gray-500">No messages found.</p>';
+        }
+      } catch(err){
+        alert("Error fetching inbox: " + err);
+      }
+    });
+
+    // Read message
+    async function readMessage(message_id){
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/temp-mail/read/${message_id}`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ email: currentEmail })
+        });
+        const data = await res.json();
+
+        if(data.message){
+          document.getElementById("msgFrom").innerText = data.message.from || "";
+          document.getElementById("msgSubject").innerText = data.message.subject || "";
+          document.getElementById("msgDate").innerText = data.message.date || "";
+          document.getElementById("msgBody").innerText = data.message.body || "";
+          document.getElementById("messageDetails").classList.remove("hidden");
+        } else {
+          alert("Message not found");
+        }
+      } catch(err){
+        alert("Error reading message: " + err);
+      }
+    }
+  </script>
+</body>
+</html>

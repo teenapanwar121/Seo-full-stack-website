@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Paraphrasing Tool</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 flex items-center justify-center">
+
+  <div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-2xl">
+
+    <!-- Title -->
+    <h1 class="text-2xl font-bold text-center text-gray-800">
+      ✍️ Paraphrasing Tool
+    </h1>
+
+    <p class="text-center text-sm text-gray-500 mt-2">
+      Rewrite text to improve clarity while preserving meaning
+    </p>
+
+    <!-- Input -->
+    <textarea
+      id="inputText"
+      rows="5"
+      placeholder="Paste your English text here (max 500 characters)"
+      class="w-full mt-6 border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400"
+    ></textarea>
+
+    <!-- Button -->
+    <button
+      onclick="paraphraseText()"
+      class="w-full mt-4 bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 rounded-lg transition"
+    >
+      Paraphrase Text
+    </button>
+
+    <!-- Output -->
+    <div
+      id="output"
+      class="mt-6 p-4 bg-gray-50 rounded-lg text-gray-700 min-h-[70px]"
+    ></div>
+
+    <!-- Limits -->
+    <p class="mt-4 text-xs text-gray-500 text-center">
+      🔒 English only · Max 500 characters · Single paraphrased output · Fair usage applies
+    </p>
+
+  </div>
+
+<script>
+async function paraphraseText() {
+  const inputEl = document.getElementById("inputText");
+  const outputEl = document.getElementById("output");
+  const text = inputEl.value.trim();
+
+  if (!text) {
+    outputEl.innerText = "❌ Please enter text to paraphrase.";
+    return;
+  }
+
+  outputEl.innerText = "⏳ Paraphrasing… please wait";
+
+  try {
+    const response = await fetch("http://127.0.0.1:8000/paraphrase", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ text: text })
+    });
+
+    const data = await response.json();
+
+    if (data.status === "success") {
+      outputEl.innerText = data.paraphrased_text;
+    } else {
+      outputEl.innerText = "❌ " + (data.error || "Something went wrong");
+    }
+
+  } catch (error) {
+    outputEl.innerText = "❌ Server error. Please try again later.";
+  }
+}
+</script>
+
+</body>
+</html>

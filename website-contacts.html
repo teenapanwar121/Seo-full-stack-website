@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Website Contacts Finder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-pink-100 min-h-screen flex flex-col items-center p-4">
+
+  <h1 class="text-3xl font-bold mb-2 text-black">Website Contacts Finder</h1>
+  <p class="text-black text-center mb-6 max-w-xl">
+    Enter any website URL to instantly find publicly available contact details like emails, phone numbers, and contact pages. 
+    This tool helps you quickly collect information for outreach, SEO research, or verifying business contact info.
+  </p>
+
+  <div class="bg-white shadow-md rounded-lg p-6 w-full max-w-xl">
+
+    <!-- URL Input -->
+    <label class="block font-medium mb-1">Website URL</label>
+    <input
+      id="websiteUrl"
+      type="text"
+      placeholder="https://example.com"
+      class="w-full border rounded px-3 py-2 mb-4 focus:outline-none focus:ring focus:ring-pink-300"
+    />
+
+    <!-- Button -->
+    <button
+      onclick="findContacts()"
+      class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded font-semibold transition transform hover:scale-105"
+    >
+      🔍 Find Contacts
+    </button>
+
+    <!-- Result -->
+    <div id="resultBox" class="mt-6 hidden bg-pink-50 p-4 rounded shadow">
+      <h2 class="font-semibold text-lg mb-2 text-black">Results</h2>
+
+      <p class="font-medium text-black">Emails:</p>
+      <ul id="emailList" class="list-disc list-inside text-sm mb-3"></ul>
+
+      <p class="font-medium text-black">Phone Numbers:</p>
+      <ul id="phoneList" class="list-disc list-inside text-sm mb-3"></ul>
+
+      <p class="font-medium text-black">Contact Pages:</p>
+      <ul id="pageList" class="list-disc list-inside text-sm"></ul>
+    </div>
+  </div>
+
+  <script>
+    async function findContacts() {
+      const url = document.getElementById("websiteUrl").value.trim();
+
+      if (!url) {
+        alert("Please enter a website URL");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/website-contacts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ url })
+        });
+
+        const data = await response.json();
+
+        if (data.status !== "success") {
+          alert("No contacts found");
+          return;
+        }
+
+        // Emails
+        const emailList = document.getElementById("emailList");
+        emailList.innerHTML = "";
+        data.emails_found.forEach(email => {
+          const li = document.createElement("li");
+          li.textContent = email;
+          emailList.appendChild(li);
+        });
+
+        // Phones
+        const phoneList = document.getElementById("phoneList");
+        phoneList.innerHTML = "";
+        data.phone_numbers_found.forEach(phone => {
+          const li = document.createElement("li");
+          li.textContent = phone;
+          phoneList.appendChild(li);
+        });
+
+        // Pages
+        const pageList = document.getElementById("pageList");
+        pageList.innerHTML = "";
+        data.contact_pages.forEach(page => {
+          const li = document.createElement("li");
+          li.innerHTML = `<a href="${page}" target="_blank" class="text-pink-600 underline">${page}</a>`;
+          pageList.appendChild(li);
+        });
+
+        document.getElementById("resultBox").classList.remove("hidden");
+
+      } catch (error) {
+        alert("Server error. Check console.");
+        console.error(error);
+      }
+    }
+  </script>
+
+</body>
+</html>

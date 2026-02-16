@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>URL Shortener</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-pink-50 min-h-screen flex items-center justify-center">
+
+  <div class="bg-white w-full max-w-md p-6 rounded-2xl shadow-lg">
+
+    <h2 class="text-2xl font-bold text-center mb-2">
+      🔗 URL Shortener
+    </h2>
+
+    <p class="text-center text-gray-500 mb-4">
+      Paste a long URL to get a short link
+    </p>
+
+    <!-- Input -->
+    <input
+      id="longUrl"
+      type="url"
+      placeholder="https://www.example.com"
+      class="w-full border p-2 rounded mb-4"
+    />
+
+    <!-- Button -->
+    <button
+      onclick="shortenUrl()"
+      class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded font-semibold"
+    >
+      Shorten URL
+    </button>
+
+    <!-- Result -->
+    <div id="result" class="mt-5 text-gray-700"></div>
+
+  </div>
+
+<script>
+async function shortenUrl() {
+  const longUrl = document.getElementById("longUrl").value.trim();
+  const resultDiv = document.getElementById("result");
+
+  if (!longUrl) {
+    resultDiv.innerHTML =
+      "<p class='text-red-500'>❌ Please enter a URL.</p>";
+    return;
+  }
+
+  resultDiv.innerHTML = "⏳ Shortening URL...";
+
+  try {
+    const response = await fetch("http://127.0.0.1:8000/url-shorten", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        long_url: longUrl
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.status !== "success") {
+      resultDiv.innerHTML =
+        "<p class='text-red-500'>❌ Failed to shorten URL.</p>";
+      return;
+    }
+
+    // ✅ Proper rendering
+    resultDiv.innerHTML = `
+      <div class="bg-pink-100 p-4 rounded-lg text-center">
+        <p class="mb-2">✅ URL shortened using <strong>${data.provider}</strong></p>
+        <a href="${data.short_url}" target="_blank"
+           class="text-blue-600 font-semibold underline break-all">
+          ${data.short_url}
+        </a>
+      </div>
+    `;
+
+  } catch (error) {
+    resultDiv.innerHTML =
+      "<p class='text-red-500'>❌ Server error. Please try again.</p>";
+  }
+}
+</script>
+
+</body>
+</html>

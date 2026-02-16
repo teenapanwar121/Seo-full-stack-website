@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>Duo Mobile PWA Kit</title>
+<link rel="stylesheet" type="text/css" href="styles/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="fonts/bootstrap-icons.css">
+<link rel="preconnect" href="https://fonts.gstatic.com/">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&amp;family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<link rel="manifest" href="_manifest.json">
+<meta id="theme-check" name="theme-color" content="#FFFFFF">
+<link rel="apple-touch-icon" sizes="180x180" href="app/icons/icon-192x192.png"></head>
+
+<body class="theme-light">
+
+<div id="preloader"><div class="spinner-border color-highlight" role="status"></div></div>
+
+<div id="page">
+
+    <!-- Your Page Content Goes Here-->
+    <div class="page-content pb-0 overflow-hidden bg-dark-dark">
+
+		<div class="splide single-slider slider-no-dots slider-no-arrows" id="single-slider-walkthrough" data-splide='{"interval":5000}'>
+			<div class="splide__track">
+				<div class="splide__list">
+					<div class="splide__slide">
+						<div class="card bg-dark-dark rounded-0" style="background-image:url(images/pictures/3l.jpg); background-size:cover;" data-card-height="cover">
+							<div class="card-center">
+								<h1 class="color-white font-40 text-center">Meet Duo</h1>
+								<p class="color-white text-center opacity-70">An absolutely beautiful Mobile PWA</p>
+								<p class="color-white font-16 text-center boxed-text-xl">
+									Duo brings the latest design trends to your Mobile Website. A native app like look and feel.
+								</p>
+							</div>
+							<div class="card-overlay bg-black opacity-40 rounded-0"></div>
+							<div class="card-overlay bg-gradient-fade rounded-0"></div>
+						</div>
+					</div>
+					<div class="splide__slide">
+						<div class="card bg-dark-dark rounded-0" style="background-image:url(images/pictures/11l.jpg); background-size:cover;" data-card-height="cover">
+							<div class="card-center">
+								<h1 class="color-white font-40 text-center">PWA Ready</h1>
+								<p class="color-white text-center opacity-70">Just add Duo to your Home Screen</p>
+								<p class="color-white font-16 text-center boxed-text-xl">
+									Enjoy Duo as a Mobile App. Add it to your home screen and make it feel native!
+								</p>
+							</div>
+							<div class="card-overlay bg-black opacity-40 rounded-0"></div>
+							<div class="card-overlay bg-gradient-fade rounded-0"></div>
+						</div>
+					</div>
+					<div class="splide__slide">
+						<div class="card bg-dark-dark rounded-0" style="background-image:url(images/pictures/2l.jpg); background-size:cover;" data-card-height="cover">
+							<div class="card-center">
+								<h1 class="color-white font-40 text-center">Dark Mode</h1>
+								<p class="color-white text-center opacity-70">Turn off the Lights! It's awesome!</p>
+								<p class="color-white font-16 text-center boxed-text-xl">
+									Duo is deeply integrated with Dark Mode. You can even detect it automatically!
+								</p>
+							</div>
+							<div class="card-overlay bg-black opacity-40 rounded-0"></div>
+							<div class="card-overlay bg-gradient-fade rounded-0"></div>
+						</div>
+					</div>
+					<div class="splide__slide">
+						<div class="card bg-dark-dark rounded-0" style="background-image:url(images/pictures/7l.jpg); background-size:cover;" data-card-height="cover">
+							<div class="card-center">
+								<h1 class="color-white font-40 text-center">Quality First</h1>
+								<p class="color-white text-center opacity-70">Made by the Lead Mobile Author on Envato</p>
+								<p class="color-white font-16 text-center boxed-text-xl">
+									Incredible Attention to Detail and The Highest Support Standards is what drives Enabled.
+								</p>
+							</div>
+							<div class="card-overlay bg-black opacity-60 rounded-0"></div>
+							<div class="card-overlay bg-gradient-fade rounded-0"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="card-bottom">
+			<a href="home.html" class="btn btn-full gradient-highlight m-4 font-700 text-uppercase shadow-bg shadow-bg-s">Get Started</a>
+		</div>
+
+    </div>
+	<!-- End of Page Content-->
+
+	<div class="offcanvas offcanvas-bottom rounded-m offcanvas-detached" id="menu-install-pwa-ios">
+	   <div class="content">
+			 <img src="app/icons/icon-128x128.png" alt="img" width="80" class="rounded-l mx-auto my-4">
+		  <h1 class="text-center font-800 font-20">Add Duo to Home Screen</h1>
+		  <p class="boxed-text-xl">
+			  Install Duo on your home screen, and access it just like a regular app. Open your Safari menu and tap "Add to Home Screen".
+		  </p>
+		   <a href="#" class="pwa-dismiss close-menu gradient-blue shadow-bg shadow-bg-s btn btn-s btn-full text-uppercase font-700  mt-n2" data-bs-dismiss="offcanvas">Maybe Later</a>
+	   </div>
+   </div>
+
+   <div class="offcanvas offcanvas-bottom rounded-m offcanvas-detached" id="menu-install-pwa-android">
+	   <div class="content">
+		   <img src="app/icons/icon-128x128.png" alt="img" width="80" class="rounded-m mx-auto my-4">
+		   <h1 class="text-center font-700 font-20">Install Duo</h1>
+		   <p class="boxed-text-l">
+			   Install Duo to your Home Screen to enjoy a unique and native experience.
+		   </p>
+		   <a href="#" class="pwa-install btn btn-m rounded-s text-uppercase font-900 gradient-highlight shadow-bg shadow-bg-s btn-full">Add to Home Screen</a><br>
+		   <a href="#" data-bs-dismiss="offcanvas" class="pwa-dismiss close-menu color-theme text-uppercase font-900 opacity-50 font-11 text-center d-block mt-n1">Maybe later</a>
+	   </div>
+   </div>
+
+</div>
+<!--End of Page ID-->
+
+<script src="scripts/bootstrap.min.js"></script>
+<script src="scripts/custom.js"></script>
+</body>

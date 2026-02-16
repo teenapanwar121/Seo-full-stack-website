@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Word Count Tool</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 flex items-center justify-center">
+
+  <div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-2xl">
+
+    <!-- Title -->
+    <h1 class="text-2xl font-bold text-center text-gray-800">
+      🧮 Word Count Tool
+    </h1>
+
+    <p class="text-center text-sm text-gray-500 mt-2">
+      Count words, characters, and sentences instantly
+    </p>
+
+    <!-- Input -->
+    <textarea
+      id="inputText"
+      rows="6"
+      placeholder="Paste or type your text here..."
+      class="w-full mt-6 border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400"
+      oninput="countText()"
+    ></textarea>
+
+    <!-- Results -->
+    <div class="mt-6 grid grid-cols-2 gap-4 text-center">
+
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <p class="text-sm text-gray-500">Words</p>
+        <p id="wordCount" class="text-xl font-bold text-gray-800">0</p>
+      </div>
+
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <p class="text-sm text-gray-500">Characters</p>
+        <p id="charCount" class="text-xl font-bold text-gray-800">0</p>
+      </div>
+
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <p class="text-sm text-gray-500">Characters (no spaces)</p>
+        <p id="charNoSpace" class="text-xl font-bold text-gray-800">0</p>
+      </div>
+
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <p class="text-sm text-gray-500">Sentences</p>
+        <p id="sentenceCount" class="text-xl font-bold text-gray-800">0</p>
+      </div>
+
+    </div>
+
+    <!-- Limitations (ADDED) -->
+    <div class="mt-4 text-xs text-gray-500 text-center">
+      <p>• Counts are space-based</p>
+      <p>• Characters include spaces and punctuation</p>
+      <p>• Best for English text</p>
+    </div>
+
+  </div>
+
+<script>
+function countText() {
+  const text = document.getElementById("inputText").value;
+
+  // Words
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+
+  // Characters
+  const chars = text.length;
+
+  // Characters without spaces
+  const charsNoSpace = text.replace(/\s/g, "").length;
+
+  // Sentences
+  const sentences = text.trim()
+    ? text.split(/[.!?]+/).filter(s => s.trim().length > 0).length
+    : 0;
+
+  document.getElementById("wordCount").innerText = words;
+  document.getElementById("charCount").innerText = chars;
+  document.getElementById("charNoSpace").innerText = charsNoSpace;
+  document.getElementById("sentenceCount").innerText = sentences;
+}
+</script>
+
+</body>
+</html>

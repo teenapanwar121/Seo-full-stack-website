@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Translator</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-pink-50 text-gray-800">
+
+<!-- HEADER -->
+<header class="bg-white shadow px-10 py-5 flex justify-between items-center">
+  <h1 class="text-xl font-bold text-pink-600">
+    SV INFOTECH SOFTWARE SOLUTIONS
+  </h1>
+</header>
+
+<!-- HERO -->
+<section class="text-center py-16 px-4">
+  <h2 class="text-4xl font-bold mb-4">Translator</h2>
+  <div class="w-20 h-1 bg-pink-400 mx-auto mb-6"></div>
+
+  <p class="max-w-3xl mx-auto text-lg text-gray-600">
+    Translate your text instantly into multiple languages using our fast
+    and accurate translation tool. Ideal for content creation, learning,
+    and global communication.
+  </p>
+<p class="mt-4 text-sm text-gray-500">
+  🌍 Supported Languages:
+  <b>English, Hindi, French, Spanish, German, Tamil, Telugu, Marathi</b><br>
+  ⚡ Tool Capacity: Supports up to <b>3,000 characters per request</b><br>
+  🔒 Usage Limit: <b>~100 translation requests per hour</b>
+</p>
+</section>
+
+<!-- TOOL -->
+<section class="max-w-4xl mx-auto px-6 pb-20">
+  <div class="bg-white rounded-xl shadow-lg p-8">
+
+    <!-- TEXT INPUT -->
+    <label class="block mb-2 font-semibold">
+      Enter text to translate
+    </label>
+
+    <textarea
+      id="translateText"
+      rows="6"
+      placeholder="Type or paste your text here..."
+      class="w-full border rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-pink-400"
+    ></textarea>
+
+    <!-- LANGUAGE SELECT -->
+    <label class="block mt-4 mb-2 font-semibold">
+      Select target language
+    </label>
+
+    <select
+      id="targetLang"
+      class="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400"
+    >
+      <option value="en">English</option>
+      <option value="hi">Hindi</option>
+      <option value="fr">French</option>
+      <option value="es">Spanish</option>
+      <option value="de">German</option>
+      <option value="ta">Tamil</option>
+      <option value="te">Telugu</option>
+      <option value="mr">Marathi</option>
+    </select>
+
+    <!-- BUTTON -->
+    <button
+      onclick="translateText()"
+      class="mt-6 bg-pink-500 hover:bg-pink-600 text-white font-semibold px-8 py-3 rounded-lg transition"
+    >
+      Translate
+    </button>
+
+    <!-- RESULT -->
+    <div
+      id="translateResult"
+      class="mt-6 bg-pink-50 border rounded-lg p-4 text-sm min-h-[80px]"
+    ></div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-white text-center py-6 shadow-inner">
+  <p class="text-gray-500">© 2025 SV Infotech Software Solutions</p>
+</footer>
+
+<!-- SCRIPT -->
+<script>
+function translateText() {
+  const text = document.getElementById("translateText").value;
+  const lang = document.getElementById("targetLang").value;
+  const resultBox = document.getElementById("translateResult");
+
+  if (!text.trim()) {
+    resultBox.textContent = "⚠️ Please enter text to translate.";
+    return;
+  }
+
+  resultBox.textContent = "⏳ Translating...";
+
+  fetch("http://127.0.0.1:8000/translate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      text: text,
+      target_lang: lang
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    resultBox.textContent = data.translated_text;
+  })
+  .catch(() => {
+    resultBox.textContent = "❌ Translation failed. Please try again later.";
+  });
+}
+</script>
+
+</body>
+</html>
